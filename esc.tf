@@ -1,4 +1,4 @@
-# Create an ECS task definition.
+# Create an ECS resources
 resource "aws_ecs_task_definition" "ecs_task_definition" {
   family                = "${var.service_name}-ecs-app"
   container_definitions = <<DEFINITION
@@ -36,12 +36,10 @@ DEFINITION
   }
 }
 
-# Create the ECS cluster.
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = "ecs_cluster"
 }
 
-# Create the ECS service.
 resource "aws_ecs_service" "service" {
   name            = var.service_name
   cluster         = aws_ecs_cluster.ecs_cluster.id
@@ -56,13 +54,11 @@ resource "aws_ecs_service" "service" {
   }
 }
 
-# Create an EC2 instance profile.
 resource "aws_iam_instance_profile" "ec2_instance_profile" {
   name = "ec2_instance_profile"
   role = aws_iam_role.ec2_role.name
 }
 
-# Create an EC2 Launch Configuration for the ECS cluster.
 resource "aws_launch_configuration" "ecs_launch_config" {
   image_id             = data.aws_ami.latest_ecs_ami.image_id
   security_groups      = [aws_security_group.ecs_sg.id]
@@ -71,7 +67,6 @@ resource "aws_launch_configuration" "ecs_launch_config" {
   user_data            = "#!/bin/bash\necho ECS_CLUSTER=ecs_cluster >> /etc/ecs/ecs.config"
 }
 
-# Create the ECS autoscaling group.
 resource "aws_autoscaling_group" "ecs_asg" {
   name                 = "ecs-asg"
   vpc_zone_identifier  = [aws_subnet.private_1.id, aws_subnet.private_2.id]
@@ -82,7 +77,6 @@ resource "aws_autoscaling_group" "ecs_asg" {
   max_size         = var.maximum_capacity
 }
 
-# Create an autoscaling policy.
 resource "aws_autoscaling_policy" "ecs_infra_scale_out_policy" {
   name                   = "ecs_infra_scale_out_policy"
   scaling_adjustment     = 1
@@ -90,7 +84,6 @@ resource "aws_autoscaling_policy" "ecs_infra_scale_out_policy" {
   autoscaling_group_name = aws_autoscaling_group.ecs_asg.name
 }
 
-# Create an application autoscaling target.
 resource "aws_appautoscaling_target" "ecs_service_scaling_target" {
   max_capacity       = 5
   min_capacity       = 2
@@ -101,7 +94,6 @@ resource "aws_appautoscaling_target" "ecs_service_scaling_target" {
   depends_on         = [aws_ecs_service.service]
 }
 
-# Create an ECS service CPU target tracking scale out policy.
 resource "aws_appautoscaling_policy" "ecs_service_cpu_scale_out_policy" {
   name               = "cpu-target-tracking-scaling-policy"
   policy_type        = "TargetTrackingScaling"
@@ -120,7 +112,6 @@ resource "aws_appautoscaling_policy" "ecs_service_cpu_scale_out_policy" {
   }
 }
 
-# Create an ECS service memory target tracking scale out policy.
 resource "aws_appautoscaling_policy" "ecs_service_memory_scale_out_policy" {
   name               = "memory-target-tracking-scaling-policy"
   policy_type        = "TargetTrackingScaling"

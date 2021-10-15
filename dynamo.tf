@@ -1,4 +1,4 @@
-# Create a DynamoDB table.
+# Create a DynamoDB table resource
 resource "aws_dynamodb_table" "client_table" {
   name           = var.dynamodb_table_name
   billing_mode   = "PROVISIONED"

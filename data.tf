@@ -12,10 +12,8 @@ data "aws_iam_policy_document" "ecs_service_role_pd" {
   }
 }
 
-# Get the AccountId
 data "aws_caller_identity" "current" {}
 
-# Create an IAM policy document for assumed roles for EC2.
 data "aws_iam_policy_document" "ec2_role_pd" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -27,7 +25,6 @@ data "aws_iam_policy_document" "ec2_role_pd" {
   }
 }
 
-# Create an IAM policy document for assumed roles for EC2 autoscaling.
 data "aws_iam_policy_document" "autoscaling_pd" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -39,7 +36,6 @@ data "aws_iam_policy_document" "autoscaling_pd" {
   }
 }
 
-# Get the latest AMI ID for the ECS optimized Amazon Linux 2 image.
 data "aws_ami" "latest_ecs_ami" {
   most_recent = true
 

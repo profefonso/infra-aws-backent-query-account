@@ -1,4 +1,4 @@
 output "alb_dns_name" {
-  description = "The Application Load Balancer DNS name"
+  description = "Load Balancer DNS"
   value       = aws_lb.main.*.dns_name[0]
 }

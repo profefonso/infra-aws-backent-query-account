@@ -1,6 +1,6 @@
-# Create the Application Load Balancer.
+# Create Load Balancer Resources.
 resource "aws_lb" "main" {
-  name                       = "ecsalb"
+  name                       = "query-client-lb"
   internal                   = false
   load_balancer_type         = "application"
   security_groups            = [aws_security_group.ecs_sg.id]
@@ -9,7 +9,6 @@ resource "aws_lb" "main" {
   enable_deletion_protection = false
 }
 
-# Create the ALB target group.
 resource "aws_lb_target_group" "ecs_rest_api_tg" {
   name     = "ecs-tg"
   port     = 5000
@@ -26,7 +25,6 @@ resource "aws_lb_target_group" "ecs_rest_api_tg" {
   }
 }
 
-# Create the ALB listener.
 resource "aws_lb_listener" "alb_listener" {
   load_balancer_arn = aws_lb.main.arn
   port              = 80

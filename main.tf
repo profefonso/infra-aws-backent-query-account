@@ -141,7 +141,6 @@ resource "aws_iam_role" "autoscaling_role" {
   }
 }
 
-# Create a security group for the ALB.
 resource "aws_security_group" "ecs_sg" {
   name        = "ecs-sg"
   description = "ECS security group for the ALB."
