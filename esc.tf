@@ -54,16 +54,16 @@ resource "aws_ecs_service" "service" {
   }
 }
 
-resource "aws_iam_instance_profile" "ec2_instance_profile" {
-  name = "ec2_instance_profile"
-  role = aws_iam_role.ec2_role.name
-}
+#resource "aws_iam_instance_profile" "ec2_instance_profile" {
+#  name = "ec2_instance_profile"
+#  role = aws_iam_role.ec2_role.name
+#}
 
 resource "aws_launch_configuration" "ecs_launch_config" {
   image_id             = data.aws_ami.latest_ecs_ami.image_id
   security_groups      = [aws_security_group.ecs_sg.id]
   instance_type        = var.instance_type
-  iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name
+  iam_instance_profile = "ec2_instance_profile"
   user_data            = "#!/bin/bash\necho ECS_CLUSTER=ecs_cluster >> /etc/ecs/ecs.config"
 }
 
